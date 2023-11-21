@@ -4,6 +4,9 @@
     <TargetFramework>net6.0</TargetFramework>
     <IsPackable>false</IsPackable>
     <LangVersion>latest</LangVersion>
+  <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
+    <CompilerGeneratedFilesOutputPath>_generated</CompilerGeneratedFilesOutputPath>
+    <RunPostBuildEvent>Always</RunPostBuildEvent>
   </PropertyGroup>
 
   <ItemGroup>
@@ -18,4 +21,9 @@
     <ProjectReference Include="..\BuilderGenerator.IntegrationTests.Core\BuilderGenerator.IntegrationTests.Core.csproj" />
   </ItemGroup>
 
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="powershell &quot;$configFiles = Get-ChildItem ./_generated/ *.cs -rec; foreach ($file in $configFiles) { (Get-Content $file.PSPath) | Foreach-Object { $_ -replace '.GENXXX', '' } | Set-Content $file.PSPath }&quot;" />
+    <Exec Command="powershell &quot;$limit = (Get-Date).AddSeconds(-15); Get-ChildItem ./_generated/ *.cs -rec -Force | Where-Object {$_.LastWriteTime -lt $limit} | Remove-Item&quot;" />
+  </Target>
+  
 </Project>

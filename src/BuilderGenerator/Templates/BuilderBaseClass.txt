@@ -1,6 +1,6 @@
 #nullable disable
 
-namespace BuilderGenerator
+namespace BuilderGenerator.GENXXX
 {
     /// <summary>Base class for object builder classes.</summary>
     /// <typeparam name="T">The type of the objects built by this builder.</typeparam>

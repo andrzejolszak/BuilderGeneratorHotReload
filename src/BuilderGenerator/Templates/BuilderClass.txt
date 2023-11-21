@@ -8,9 +8,9 @@
 using System.CodeDom.Compiler;
 {{BuilderClassUsingBlock}}
 
-namespace {{BuilderClassNamespace}}
+namespace {{BuilderClassNamespace}}.GENXXX
 {
-    {{BuilderClassAccessibility}} partial class {{BuilderClassName}} : BuilderGenerator.Builder<{{TargetClassFullName}}>
+    {{BuilderClassAccessibility}} partial class {{BuilderClassName}} : BuilderGenerator.GENXXX.Builder<{{TargetClassFullName}}>
     {
 {{Properties}}
 {{BuildMethod}}

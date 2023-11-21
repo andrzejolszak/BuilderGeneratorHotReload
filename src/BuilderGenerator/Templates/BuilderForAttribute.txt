@@ -1,4 +1,4 @@
-namespace BuilderGenerator
+namespace BuilderGenerator.GENXXX
 {
     [System.AttributeUsage(System.AttributeTargets.Class)]
     public class BuilderForAttribute : System.Attribute
