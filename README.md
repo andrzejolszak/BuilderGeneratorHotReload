@@ -4,21 +4,23 @@
 [![CI](https://github.com/MelGrubb/BuilderGenerator/actions/workflows/ci.yml/badge.svg)](https://github.com/MelGrubb/BuilderGenerator/actions/workflows/ci.yml)
 [![Discord](https://img.shields.io/discord/813785114722697258?logo=discord&logoColor=white)](https://discord.com/channels/813785114722697258/1099524153436012694)
 
-# This Fork #
+# The Source Generator Project Hot Reload Hack #
 
-This fork exists to demonstrate a workaround for the famous longstanding issue "Visual Studio does not refresh my source generator that I have just edited, I cannot see changes I just made reflected in Intellisense". In short, if you have both your source generator project and your dependant client project in the same solution, the initial version of the source generator used for intellisense in the client project will remain, no matter what changes/cleans/rebuilds/reloads you do to the generator project. Ultimately, restarting VS is your only sure option here.
+This fork only exists to demonstrate a workaround for the famous longstanding issue "Visual Studio does not refresh my source generator that I have just edited, I cannot see changes I just made reflected in Intellisense". In short, if you have both your source generator project and your dependant client project in the same solution, the initial version of the source generator used for intellisense in the client project will remain, no matter what changes/cleans/rebuilds/reloads you do to the generator project. Ultimately, restarting VS is your only sure option here.
+
 Interestingly, while the intellisense version of your analyzer is 'stuck', it seems that the source-gen files exported via the *EmitCompilerGeneratedFiles* option are always up to date. The hack presented here is simply and exploitation of this - if the files are up to date, then make them part of your build, and sprinkle a couple dirty tricks to avoid name clashes against the in-memory versions of the same classes. Because these are just normal source files, they will always be picked up afresh by intellisense, no need to do any further magic here.
 
 In a nutshell:
 
 1. Use *EmitCompilerGeneratedFiles* and *CompilerGeneratedFilesOutputPath* to output generated files (with regards to source control it's probably good if you gitinore them, but it's up to you)
-2. Put any 'API' parts of your generator, like attributes etc., as normal files in a dedicated project. These files need to the compiler beforehand, so that we can always get good compilation to boot. *TODO: check this*
-3. Make all your generated class use a fairly unique namespace that will not be easily/accidentaly discoverable by the client.
-4. After all the files are emitted, have post-build event to go through the files and fix the namespace to the one expected by the client.
-5. Files get overwritten when emitting, so any continuously existing files will be up to date. Handle any leftover files that don't get generated anymore by deleting *non-recently modified* files in the post-build event.
-6. This should now let you see the changes to your generator propagate to your client project without issues. As an added bonus, you have all your generated code in the plain sight, where you can inspect it and place breakpoints for debugging.
+2. Edit your generator to make all your generated code use a 'scrambler' namespace that will not be easily/accidentaly discoverable by the client. *GENXXX* is used in this example.
+3. After all the files are emitted, add a post-build event in your client project, that will fix the namespaces in the emitted files to the one expected by the client.
+4. Files get overwritten when emitting, so any continuously existing emits will be up to date. However, we have to handle emits that stop to be generated anymore, so that they don't remain there forever - we can simply do this by deleting *non-recently modified* files in the post-build event.
+5. This should now let you see the emitted files and intellisense refreshing in the client project as you make changes to your generator. As an added bonus, you have all your generated code in the plain sight, where you can inspect it and place breakpoints for debugging. Please note that if you are building without any emitted files present to start with, then you will need to invoke build 2-3 times for it to gradually populate the files - after the files are there, everything is back to normal. This could be improved by moving all *API* parts of your generator like attributes etc. as static files to their own project instead of generating them - up to you if that's something you want to do.
+6. When it is time to release your generator to nuget, you likely want to strip it from the 'scrambler' namespace, as you end user will not have the described hack applied to their projects.
 
-Finally, please note that this is not meant to be a 'production use' solution, it's only here to make your life as source generator author easier, and to help you get more immediate feedback on your work. Oh, and unit tests, don't forget unit tests even if you can now easily 'test by hand' - the original project shows very well how do set them up.
+
+Finally, please note that this is not meant to be a 'production use' solution, it's only here to make your life as source generator author easier, and to help you get more immediate feedback on your work. Oh, and the unit tests, don't forget about unit tests even if you can 'just test by hand' - the original project demonstrates very well how to set a good test infrastructure.
 
 Please let me know if you find improvements to this glorious hack!
 
