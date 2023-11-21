@@ -4,7 +4,7 @@
 [![CI](https://github.com/MelGrubb/BuilderGenerator/actions/workflows/ci.yml/badge.svg)](https://github.com/MelGrubb/BuilderGenerator/actions/workflows/ci.yml)
 [![Discord](https://img.shields.io/discord/813785114722697258?logo=discord&logoColor=white)](https://discord.com/channels/813785114722697258/1099524153436012694)
 
-# The Source Generator Project Hot Reload Hack #
+# Source Generator Hot Reload Hack #
 
 This fork only exists to demonstrate a workaround for the famous longstanding issue "Visual Studio does not refresh my source generator that I have just edited, I cannot see changes I just made reflected in Intellisense". In short, if you have both your source generator project and your dependant client project in the same solution, the initial version of the source generator used for intellisense in the client project will remain, no matter what changes/cleans/rebuilds/reloads you do to the generator project. Ultimately, restarting VS is your only sure option here.
 
