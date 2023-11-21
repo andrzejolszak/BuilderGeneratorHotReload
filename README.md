@@ -6,7 +6,8 @@
 
 # Source Generator Hot Reload Hack #
 
-This fork only exists to demonstrate a workaround for the famous longstanding issue "Visual Studio does not refresh my source generator that I have just edited, I cannot see changes I just made reflected in Intellisense". In short, if you have both your source generator project and your dependant client project in the same solution, the initial version of the source generator used for intellisense in the client project will remain, no matter what changes/cleans/rebuilds/reloads you do to the generator project. Ultimately, restarting VS is your only sure option here.
+This fork only exists to demonstrate a workaround for the famous longstanding issue "Visual Studio does not refresh my source generator that I have just edited, I cannot see changes I just made reflected in Intellisense".
+In short, the issue is that if you have both your source generator project and your dependant client project in the same solution, the Visual Studio Intellisense will only use the initial version of the source generator and never refresh it, no matter what changes/cleans/rebuilds/reloads you do to the generator project. Ultimately, restarting VS is your only sure option to get your generator changes visible in Intellisense.
 
 Interestingly, while the intellisense version of your analyzer is 'stuck', it seems that the source-gen files exported via the *EmitCompilerGeneratedFiles* option are always up to date. The hack presented here is simply and exploitation of this - if the files are up to date, then make them part of your build, and sprinkle a couple dirty tricks to avoid name clashes against the in-memory versions of the same classes. Because these are just normal source files, they will always be picked up afresh by intellisense, no need to do any further magic here.
 
