@@ -1,4 +1,4 @@
-using BuilderGenerator;
+using BuilderGenerator.GENXXX;
 
 namespace BuilderGenerator.UnitTests
 {

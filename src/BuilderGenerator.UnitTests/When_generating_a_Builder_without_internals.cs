@@ -38,6 +38,6 @@ public class When_generating_a_Builder_without_internals : Given_a_BuilderGenera
         var sourceText = generatorResult.GeneratedSources[2].SourceText.ToString();
 
         // Since the generation time will keep changing, we'll just compare everything after the first instance of the word "using".
-        sourceText[sourceText.IndexOf("using", StringComparison.OrdinalIgnoreCase)..].ShouldBe(expectedOutput[expectedOutput.IndexOf("using", StringComparison.OrdinalIgnoreCase)..]);
+        sourceText[sourceText.IndexOf("using", StringComparison.OrdinalIgnoreCase)..].Replace(".GENXXX", string.Empty).ShouldBe(expectedOutput[expectedOutput.IndexOf("using", StringComparison.OrdinalIgnoreCase)..]);
     }
 }
