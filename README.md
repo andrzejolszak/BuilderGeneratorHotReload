@@ -20,7 +20,7 @@ In a nutshell:
 6. When it is time to release your generator to nuget, you likely want to strip it from the 'scrambler' namespace, as you end user will not have the described hack applied to their projects.
 
 
-Finally, please note that this is not meant to be a 'production use' solution, it's only here to make your life as source generator author easier, and to help you get more immediate feedback on your work. Oh, and unit tests, don't forget unit tests even if you can now easily 'test by hand' - the original project shows very well how do set them up.
+Finally, please note that this is not meant to be a 'production use' solution, it's only here to make your life as source generator author easier, and to help you get more immediate feedback on your work. Oh, and the unit tests, don't forget about unit tests even if you can 'just test by hand' - the original project demonstrates very well how to set a good test infrastructure.
 
 Please let me know if you find improvements to this glorious hack!
 
