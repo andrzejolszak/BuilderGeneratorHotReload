@@ -11,7 +11,7 @@ In short, the issue is that if you have both your source generator project and y
 
 Interestingly, while the intellisense version of your analyzer is 'stuck', it seems that the source-gen files exported via the *EmitCompilerGeneratedFiles* option are always up to date. The hack presented here is simply and exploitation of this - if the files are up to date, then make them part of your build, and make sure that the client code depends on the emitted classes rather than on the intellisense-in-memory classes and that we avoid name clashes between the two.
 
-In a nutshell:
+Please check the latest commits for reference, but in a nutshell:
 
 1. Client project: use *EmitCompilerGeneratedFiles* and *CompilerGeneratedFilesOutputPath* to output generated files (with regards to source control it's probably good if you gitinore them, but it's up to you)
 2. Generator project: edit your generator to make all your generated code use a 'scrambler' namespace that will not be easily/accidentaly discoverable by the client. *GENXXX* is used in this example.
