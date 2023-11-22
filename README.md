@@ -7,23 +7,22 @@
 # Source Generator Hot Reload Hack #
 
 This fork only exists to demonstrate a workaround for the famous longstanding issue "Visual Studio does not refresh my source generator that I have just edited, I cannot see changes I just made reflected in Intellisense".
-In short, the issue is that if you have both your source generator project and your dependant client project in the same solution, the Visual Studio Intellisense will only use the initial version of the source generator and never refresh it, no matter what changes/cleans/rebuilds/reloads you do to the generator project. Ultimately, restarting VS is your only sure option to get your generator changes visible in Intellisense.
+In short, the issue is that if you have both your source generator project and your dependant/example client project in the same solution, then Visual Studio Intellisense will only use the initial version of the source generator class and never refresh it, no matter what changes/cleans/rebuilds/reloads you do to the generator project. Ultimately, restarting VS is your only sure option to get your generator changes visible in Intellisense.
 
-Interestingly, while the intellisense version of your analyzer is 'stuck', it seems that the source-gen files exported via the *EmitCompilerGeneratedFiles* option are always up to date. The hack presented here is simply and exploitation of this - if the files are up to date, then make them part of your build, and sprinkle a couple dirty tricks to avoid name clashes against the in-memory versions of the same classes. Because these are just normal source files, they will always be picked up afresh by intellisense, no need to do any further magic here.
+Interestingly, while the intellisense version of your analyzer is 'stuck', it seems that the source-gen files exported via the *EmitCompilerGeneratedFiles* option are always up to date. The hack presented here is simply and exploitation of this - if the files are up to date, then make them part of your build, and make sure that the client code depends on the emitted classes rather than on the intellisense-in-memory classes and that we avoid name clashes between the two.
 
 In a nutshell:
 
-1. Use *EmitCompilerGeneratedFiles* and *CompilerGeneratedFilesOutputPath* to output generated files (with regards to source control it's probably good if you gitinore them, but it's up to you)
-2. Edit your generator to make all your generated code use a 'scrambler' namespace that will not be easily/accidentaly discoverable by the client. *GENXXX* is used in this example.
-3. After all the files are emitted, add a post-build event in your client project, that will fix the namespaces in the emitted files to the one expected by the client.
-4. Files get overwritten when emitting, so any continuously existing emits will be up to date. However, we have to handle emits that stop to be generated anymore, so that they don't remain there forever - we can simply do this by deleting *non-recently modified* files in the post-build event.
-5. This should now let you see the emitted files and intellisense refreshing in the client project as you make changes to your generator. As an added bonus, you have all your generated code in the plain sight, where you can inspect it and place breakpoints for debugging. Please note that if you are building without any emitted files present to start with, then you will need to invoke build 2-3 times for it to gradually populate the files - after the files are there, everything is back to normal. This could be improved by moving all *API* parts of your generator like attributes etc. as static files to their own project instead of generating them - up to you if that's something you want to do.
-6. When it is time to release your generator to nuget, you likely want to strip it from the 'scrambler' namespace, as you end user will not have the described hack applied to their projects.
+1. Client project: use *EmitCompilerGeneratedFiles* and *CompilerGeneratedFilesOutputPath* to output generated files (with regards to source control it's probably good if you gitinore them, but it's up to you)
+2. Generator project: edit your generator to make all your generated code use a 'scrambler' namespace that will not be easily/accidentaly discoverable by the client. *GENXXX* is used in this example.
+3. Client project: After all the files are emitted, add a post-build event in your client project that will fix the 'scrambled' namespaces in the emitted files to the one expected by the client code.
+4. Client project: Files get overwritten when emitting, so any continuously existing emits will be up to date. However, we have to handle emits that stop to be generated anymore, so that they don't remain there forever - we can simply do this by deleting *non-recently modified* files in the post-build event.
+5. Now you should be able to see the emitted files and Intellisense refreshing in the client project as you make changes to your generator and recompile. As an added bonus, you will have all your generated code in the plain sight, where you can inspect it and place breakpoints for debugging. (please note that if you are building without any emitted source files present to start with, then you will need to invoke the build action 2-3 times for it to gradually populate the files - after the files are there, everything is back to normal. This could be improved by moving all *API* parts of your generator like attributes etc. into their own project as static files instead of generating them - up to you if that's something you want/need)
+6. When it's time to release your generator to nuget, you will want to strip out the namespace 'scrambling', as you end user will not have this hack applied to their projects.
 
+Finally, please note that this is not meant to be a 'production use' solution, it's only goal is to make your life easier as a source generator author. Also, it's not a replacement for unit tests in case you were wondering ;-)
 
-Finally, please note that this is not meant to be a 'production use' solution, it's only here to make your life as source generator author easier, and to help you get more immediate feedback on your work. Oh, and the unit tests, don't forget about unit tests even if you can 'just test by hand' - the original project demonstrates very well how to set a good test infrastructure.
-
-Please let me know if you find improvements to this glorious hack!
+Please let me know if you find any improvements/simplifications to this approach!
 
 Now, about the original project:
 
